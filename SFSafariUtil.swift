@@ -9,22 +9,26 @@ import SafariServices
 
 class SFSafariUtil: NSObject, SFSafariViewControllerDelegate {
 
-    class var shared: SFSafariUtil {
-        struct Static {
-            static let instance: SFSafariUtil = SFSafariUtil()
-        }
-        return Static.instance
-    }
+    // シングルトンインスタンスの生成
+    static let shared = SFSafariUtil()
+    
+    // プライベートイニシャライザ
     private override init() {}
 
-
-    func goSFSafari(caller: UIViewController, url: String) {
-        let url = URL.init(string: url)!
-        let brow = SFSafariViewController(url: url, entersReaderIfAvailable: true)
-        caller.present(brow, animated: true, completion: nil)
+    // SFSafariViewControllerを開くメソッド
+    func openSafari(from viewController: UIViewController, urlString: String) {
+        guard let url = URL(string: urlString) else {
+            Log.debug("Invalid URL string: \(urlString)")
+            return
+        }
+        
+        let safariViewController = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+        safariViewController.delegate = self
+        viewController.present(safariViewController, animated: true, completion: nil)
     }
     
+    // SFSafariViewControllerDelegateメソッド
     func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        Log.debug("close")
+        Log.debug("SafariViewController closed")
     }
 }
