@@ -7,18 +7,21 @@
 import UIKit
 
 class Log: NSObject {
-
+    
     static func debug(_ obj: Any?,
-                         function: String = #function,
-                         line: Int = #line) {
-        #if DEBUG
-            if let obj = obj {
-                print("[function:\(function)-\(line):]")
-                debugPrint(obj)
-            } else {
-                print("[function:\(function)-\(line)]")
-            }
-        #endif
+                      function: String = #function,
+                      line: Int = #line,
+                      file: String = #file) {
+#if DEBUG
+        let fileName = (file as NSString).lastPathComponent
+        let logPrefix = "[\(fileName):\(function) - Line:\(line)]"
+        
+        if let obj = obj {
+            print(logPrefix)
+            debugPrint(obj)
+        } else {
+            print("\(logPrefix) nil")
+        }
+#endif
     }
-
 }
