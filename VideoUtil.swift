@@ -9,28 +9,25 @@ import AVKit
 import AVFoundation
 
 class VideoUtil: NSObject {
-
-    class var shared: VideoUtil {
-        struct Static {
-            static let instance: VideoUtil = VideoUtil()
-        }
-        return Static.instance
-    }
-    private override init() {}
-
-    func play(caller: UIViewController, urlString: String) {
-        if let url = URL(string: urlString) {
-            
-            let videoPlayer = AVPlayer(url: url)
-            let playerController = AVPlayerViewController()
-            playerController.player = videoPlayer
-            caller.present(playerController, animated: true, completion: {
-                videoPlayer.play()
-            })
-            
-        } else {
-            Log.debug("no such file")
-        }
     
+    // シングルトンインスタンスの生成
+    static let shared = VideoUtil()
+    
+    // プライベートイニシャライザ
+    private override init() {}
+    
+    // ビデオを再生する関数
+    func play(caller: UIViewController, urlString: String) {
+        guard let url = URL(string: urlString) else {
+            Log.debug("Invalid URL string: \(urlString)")
+            return
+        }
+        
+        let videoPlayer = AVPlayer(url: url)
+        let playerController = AVPlayerViewController()
+        playerController.player = videoPlayer
+        caller.present(playerController, animated: true) {
+            videoPlayer.play()
+        }
     }
 }
